@@ -4,18 +4,23 @@ import { InternalServerErrorException } from '@nestjs/common';
 
 import { CoreEntity } from 'src/common/entities/core.entity';
 import { ApiProperty } from '@nestjs/swagger';
+import { Field, ObjectType } from '@nestjs/graphql';
 
+@ObjectType()
 @Entity()
 export class User extends CoreEntity {
   @ApiProperty({ description: 'password', example: '비밀 번호' })
+  @Field((type) => String)
   @Column()
   password: string;
 
   @ApiProperty({ description: '유저 이름입니다.', example: '유저 이름' })
+  @Field((type) => String)
   @Column()
   username: string;
 
   @ApiProperty({ description: '내용물', example: '내용' })
+  @Field((type) => String)
   @Column({ default: ' ' })
   dsc: string;
 

@@ -1,10 +1,13 @@
+import { ApolloDriver } from '@nestjs/apollo';
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
+import { GraphQLModule } from '@nestjs/graphql';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { JwtMiddleware } from './JwtMiddleware/Jwt.middleware';
 
 import { UserModule } from './user/user.module';
+import { GraphqlModule } from './graphql/graphql.module';
 
 @Module({
   imports: [
@@ -18,7 +21,14 @@ import { UserModule } from './user/user.module';
       entities: [`dist/**/*.entity{ .ts,.js}`],
       synchronize: true,
     }),
+    GraphQLModule.forRoot({
+      driver: ApolloDriver,
+      autoSchemaFile: true,
+      playground: true,
+      context: ({ req }) => ({ user: req['user'] }),
+    }),
     UserModule,
+    GraphqlModule,
   ],
   controllers: [AppController],
   providers: [AppService],
