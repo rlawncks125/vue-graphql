@@ -33,7 +33,7 @@ export class updateUserArgsType extends PickType(
 ) {}
 
 // GraphQL ArgType
-async functionName(
+  async functionName(
     @Args() { dsc }: updateUserArgsType,
   ) {
     return this.userService.update(user, { dsc });
@@ -55,8 +55,8 @@ export class updateUserInputType extends PickType(
 ) {}
 
 // GraphQL inputType 사용
- async functionName(
-  @Args('args') { dsc }: updateUserInputType,
+  async functionName(
+    @Args('args') { dsc }: updateUserInputType,
   ) {
     return this.userService.update(user, { dsc });
   }
@@ -83,7 +83,7 @@ services:
       - ./front-vue/node_modules/@types:/usr/src/app/node_modules/@types
     container_name: vue-graphQL
 
-  DB:
+  myDB:
     image: mariadb
     environment:
       - MARIADB_ROOT_PASSWORD='password'
@@ -102,7 +102,7 @@ services:
       - 3033:3033
     environment:
       - PORTS=3033
-      - DB_HOST=DB
+      - DB_HOST=myDB
       - DB_PORT=3306
       - DB_ROOT=root
       - DB_PASSWORD='password'
