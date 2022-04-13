@@ -9,9 +9,13 @@ import {
   ObjectType,
   Field,
   Mutation,
+  InputType,
+  PickType,
 } from '@nestjs/graphql';
 import { AuthGuardGraphQL } from 'src/auth/auth.guard';
 import { authUserGraphQL } from 'src/auth/authUser.decorator';
+import { updateUserArgsType, updateUserInputType } from './dtos/userUpdate.dto';
+
 import { User } from './entities/user.entity';
 import { UserService } from './user.service';
 
@@ -30,21 +34,33 @@ export class UserResolver {
     return this.userService.findById(id);
   }
 
+  // @ArgsType
   @Mutation((returns) => User)
   @UseGuards(AuthGuardGraphQL)
   async updateUser(
     @authUserGraphQL() user: User,
-    @Args('dsc', { type: () => String }) dsc: string,
+    @Args() { dsc }: updateUserArgsType,
   ) {
     return this.userService.update(user, { dsc });
   }
 
+  // @InputType
+  @Mutation((returns) => String)
+  @UseGuards(AuthGuardGraphQL)
+  async updateUserResturnString(
+    @authUserGraphQL() user: User,
+    @Args('args') { dsc }: updateUserInputType,
+  ) {
+    return this.userService.update(user, { dsc });
+  }
+
+  // ResolveFild : 출력될 Resolver(여기선 User)값에 FIeld를 추가
   @ResolveField('updateData', (returns) => User)
   async updateData(@Parent() user: User) {
     return this.userService.findById(user.id);
   }
 
-  @ResolveField('newField', (returns) => NewFiled)
+  @ResolveField('newField', (returns) => NewResolveFiled)
   async testUser(@Parent() user: User) {
     return {
       getId: user.id,
@@ -54,7 +70,7 @@ export class UserResolver {
 }
 
 @ObjectType()
-class NewFiled {
+class NewResolveFiled {
   @Field((type) => String)
   getId: string;
 
