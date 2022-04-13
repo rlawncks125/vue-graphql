@@ -1,5 +1,14 @@
 # vue
 
+```
+### Manual installation
+npm install --save graphql graphql-tag @apollo/client
+
+### Composition API
+npm install --save @vue/apollo-composable
+
+```
+
 # Backed ( nest )
 
 접속시 db_database가 없기때문에 에러 발생
