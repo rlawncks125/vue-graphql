@@ -26,6 +26,10 @@ import { GraphqlModule } from './graphql/graphql.module';
       autoSchemaFile: true,
       playground: true,
       context: ({ req }) => ({ user: req['user'] }),
+      subscriptions: {
+        'graphql-ws': true,
+        'subscriptions-transport-ws': true,
+      },
     }),
     UserModule,
     GraphqlModule,

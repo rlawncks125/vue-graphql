@@ -1,5 +1,8 @@
 # vue
 
+Vue3 Composition API
+https://v4.apollo.vuejs.org/guide-composable/
+
 ```
 ### Manual installation
 npm install --save graphql graphql-tag @apollo/client
@@ -22,6 +25,19 @@ graphql 설치
 
 ```
 npm i @nestjs/graphql @nestjs/apollo graphql apollo-server-express
+```
+
+graphql-ws 설정
+
+```
+패키지 설치
+// 설정
+npm install graphql-ws
+npm install subscriptions-transport-ws
+
+// subsciprtion 패키지
+npm install graphql-subscriptions
+
 ```
 
 # GraphQL

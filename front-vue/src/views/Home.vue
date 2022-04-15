@@ -2,16 +2,15 @@
   <div class="home">apllo GeaphQL 테스트</div>
   <h2>Qeury</h2>
   <div v-if="queryData">
-    {{ queryData.getArgsName.name }} 'V'
-    {{ queryData.getArgsName.NewField.str }}
-    <br />
-    {{ queryData.getHello.name }} 'V'
-    {{ queryData.getHello.NewField.str }}
+    <div v-for="item in queryData" :key="item.id">
+      {{ item.name }} '|' {{ item.NewField.str }}
+    </div>
   </div>
   <h2>Mutation</h2>
   <div v-if="muationData">
-    {{ muationData.data.getArgsType.name }}
-    {{ muationData.data.getInputType.name }}
+    <div v-for="item in muationData" :key="item.id">
+      {{ item.name }} '|' {{ item.NewField.str }}
+    </div>
   </div>
 </template>
 
@@ -22,10 +21,12 @@ import { computed, defineComponent, onMounted, ref, toRaw, watch } from "vue";
 
 export default defineComponent({
   setup() {
+    // Query
     const {
       result: queryResult,
       loading,
       error,
+      fetchMore,
     } = useQuery(
       gql`
         query testQuery($argsName: String!) {
@@ -49,15 +50,17 @@ export default defineComponent({
     );
 
     const queryData = computed(() => queryResult.value);
-    const muationData = ref();
 
     watch(queryResult, () => {
       console.log(queryData.value);
     });
 
-    const { mutate: sendMutation, onDone } = useMutation(
+    // Mutation
+    const muationData = ref();
+
+    const { mutate: sendMutation, onDone: mutationDone } = useMutation(
       gql`
-        mutation testMutation($inputType: GRinputType!, $argsType: String!) {
+        mutation ($inputType: GRinputType!, $argsType: String!) {
           getArgsType(name: $argsType) {
             name
             NewField {
@@ -77,13 +80,15 @@ export default defineComponent({
       inputType: {
         name: "inputType",
       },
-      argsType: "ㅋㅋ",
+      argsType: "argsType",
     });
 
-    onDone((result) => {
+    mutationDone((result) => {
       console.log(result);
-      muationData.value = result;
+      muationData.value = result.data;
     });
+
+    //
     return { queryData, muationData };
   },
 });

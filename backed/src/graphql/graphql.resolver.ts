@@ -10,7 +10,9 @@ import {
   Query,
   ResolveField,
   Resolver,
+  Subscription,
 } from '@nestjs/graphql';
+import { PubSub } from 'graphql-subscriptions';
 
 @ObjectType()
 class GraphQLTest {
@@ -32,6 +34,8 @@ class GRargsType extends PickType(GraphQLTest, ['name'] as const, ArgsType) {}
 
 @InputType()
 class GRinputType extends PickType(GraphQLTest, ['name'] as const, InputType) {}
+
+const pubSub = new PubSub();
 
 // Resolver 시작
 @Resolver((of) => GraphQLTest)
@@ -69,5 +73,25 @@ export class GraphqlResolver {
   @ResolveField('NewField', () => NewFiled)
   NewField(@Parent() graphqltest: GraphQLTest): NewFiled {
     return { str: 'new Field ' + graphqltest.name };
+  }
+
+  @Subscription((returns) => String, {
+    name: 'subTest',
+    filter: (payload: any, variables: any) => {
+      console.log(payload, variables);
+      return payload.postSub === variables.subID;
+    },
+  })
+  subTest(@Args('subID') subID: string) {
+    return pubSub.asyncIterator('subTest');
+  }
+
+  @Mutation((returns) => String)
+  postSub(
+    @Args('str', { type: () => String }) str: string,
+    @Args('postSub', { type: () => String }) postSub: string,
+  ) {
+    pubSub.publish('subTest', { subTest: str, postSub });
+    return str;
   }
 }
