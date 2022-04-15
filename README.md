@@ -10,6 +10,9 @@ npm install --save graphql graphql-tag @apollo/client
 ### Composition API
 npm install --save @vue/apollo-composable
 
+
+## subscriptions 의존성 설치
+npm install --save subscriptions-transport-ws
 ```
 
 # Backed ( nest )
@@ -35,7 +38,7 @@ graphql-ws 설정
 npm install graphql-ws
 npm install subscriptions-transport-ws
 
-// subsciprtion 패키지
+// subscriptions 패키지
 npm install graphql-subscriptions
 
 ```

@@ -75,10 +75,12 @@ export class GraphqlResolver {
     return { str: 'new Field ' + graphqltest.name };
   }
 
+  // subscription 테스트
   @Subscription((returns) => String, {
     name: 'subTest',
+    // payload publish로 보낸 데이터
+    // variables 는 @Args로 받은 데이터
     filter: (payload: any, variables: any) => {
-      console.log(payload, variables);
       return payload.postSub === variables.subID;
     },
   })

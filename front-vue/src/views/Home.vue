@@ -12,12 +12,34 @@
       {{ item.name }} '|' {{ item.NewField.str }}
     </div>
   </div>
+  <h2>Subcription</h2>
+  <label for="">수신할 ID : </label>
+  <input type="text" v-model="subVariables.subID" placeholder="수신할 ID" />
+
+  <br />
+  <input type="text" v-model="subPost.str" placeholder="보낼 데이터" />
+  <input type="text" v-model="subPost.postSub" placeholder="보낼 수신중인 ID" />
+  <button @click="subMutation">보내기</button>
+  <div>{{ subArray }}</div>
 </template>
 
 <script lang="ts">
-import { useMutation, useQuery, useResult } from "@vue/apollo-composable";
+import {
+  useMutation,
+  useQuery,
+  useResult,
+  useSubscription,
+} from "@vue/apollo-composable";
 import gql from "graphql-tag";
-import { computed, defineComponent, onMounted, ref, toRaw, watch } from "vue";
+import {
+  computed,
+  defineComponent,
+  onMounted,
+  reactive,
+  ref,
+  toRaw,
+  watch,
+} from "vue";
 
 export default defineComponent({
   setup() {
@@ -88,8 +110,52 @@ export default defineComponent({
       muationData.value = result.data;
     });
 
+    // subscription
+    const subArray = ref<any[]>([]);
+    const subVariables = reactive({
+      subID: "",
+    });
+    const { result: subResult } = useSubscription(
+      gql`
+        subscription ($subID: String!) {
+          subTest(subID: $subID)
+        }
+      `,
+      subVariables
+    );
+
+    watch(subResult, (data) => {
+      console.log("new Data", data);
+      subArray.value.push(data.subTest);
+    });
+
+    const subPost = reactive({
+      str: "",
+      postSub: "",
+    });
+
+    const { mutate: subMutation } = useMutation(
+      gql`
+        mutation ($str: String!, $postSub: String!) {
+          postSub(str: $str, postSub: $postSub)
+        }
+      `,
+      () => ({
+        variables: {
+          ...subPost,
+        },
+      })
+    );
+
     //
-    return { queryData, muationData };
+    return {
+      queryData,
+      muationData,
+      subArray,
+      subMutation,
+      subVariables,
+      subPost,
+    };
   },
 });
 </script>
