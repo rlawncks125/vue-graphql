@@ -1,5 +1,8 @@
 <template>
-  <div id="nav"><router-link to="/">Home</router-link> |</div>
+  <div id="nav">
+    <router-link to="/">useEvent 타입</router-link> |
+    <router-link to="/codegen">codegen 타입</router-link> |
+  </div>
   <router-view />
 </template>
 

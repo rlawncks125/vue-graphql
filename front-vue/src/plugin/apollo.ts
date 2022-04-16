@@ -1,6 +1,5 @@
 import {
   ApolloClient,
-  createHttpLink,
   InMemoryCache,
   HttpLink,
   split,

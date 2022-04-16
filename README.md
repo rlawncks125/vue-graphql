@@ -15,12 +15,66 @@ npm install --save @vue/apollo-composable
 npm install --save subscriptions-transport-ws
 ```
 
+apollo useEvent타입 vs graphQL-codegen 라이브러리
+
+```
+// 간단 비교
+typescript | apllo < graphQL-codegen
+세세한 기능 | apllo > graphQL-codegen
+
+// 이프로젝트는 graphql-codegen으로 type 이 겹칠까봐 apollo:codegen을 사용하지 않았음
+
+apollo useEvvent 타입 장단점
+장점 :
+단점 : type 정의 할떄마다 타입 캐스팅 해줘야하는 번거로움이 있음
+
+graphQL-codegen 타입 장단점
+장점 : 타입 스크립트 형식으로 use함수를 만들어줌
+단점 : 세세한 기능(loading , toMore머시기 등등) 못쓰는거 같음
+
+```
+
+graphQL-codegen 라이브러리 사용
+
+```
+// 설치
+# npm install --save graphql
+# npm install --save @graphql-codegen/cli
+
+// 플러그인 설치
+# npm install --save @graphql-codegen/typescript-vue-urql
+# npm install --save @graphql-codegen/typescript
+# npm install --save @graphql-codegen/typescript-operations
+
+// codegen 환경 구성
+codegen.yml << 설정 파일
+
+// urql 의존성 설치
+# npm install --save @urql/vue
+
+// urql 쓰기위한 설정
+./plugin/graphql-codegen  << 설정 파일
+
+// main.ts 추가
+import urql from "@urql/vue";
+import { urqlClient } from "@/plugin/graphql-codegen";
+
+vue.use(urql, urqlClient) // graphql-codegen 라이브러리 urql 통신 사용
+
+// codegen 명령어 설정
+{
+  "codegen": "npx graphql-codegen"
+}
+
+```
+
 # Backed ( nest )
 
-접속시 db_database가 없기때문에 에러 발생
+docker로 만든 DB 접속시 db_database가 없기때문에 에러 발생
 
 ```
 docker exec -it 'mariadb-contaier' -uroot -p'비밀번호' << mysql 접속
+ALTER USER root@localhost IDENTIFIED BY '새로운패스워드'; << root 임시 비밀번호 재설정
 create database 'db_database' << database 생성
 ```
 

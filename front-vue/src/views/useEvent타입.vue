@@ -1,4 +1,5 @@
 <template>
+  <h2>Apollo useEvent 타입을 사용</h2>
   <div class="home">apllo GeaphQL 테스트</div>
   <h2>Qeury</h2>
   <div v-if="queryData">
@@ -24,6 +25,9 @@
 </template>
 
 <script lang="ts">
+import { Query_QUERYTEST } from "@/graphql/gql/Query";
+import { Mutation_ArgsType, Mutation_Postsub } from "@/graphql/gql/Mutations";
+import { Subscription_SubTest } from "@/graphql/gql/Subscription";
 import {
   useMutation,
   useQuery,
@@ -40,6 +44,16 @@ import {
   toRaw,
   watch,
 } from "vue";
+import {
+  ArgsTypeMutation,
+  ArgsTypeMutationVariables,
+  PostSubMutation,
+  PostSubMutationVariables,
+  QueryTestQuery,
+  QueryTestQueryVariables,
+  SubTestSubscription,
+  SubTestSubscriptionVariables,
+} from "@/graphql/graphql-codegen";
 
 export default defineComponent({
   setup() {
@@ -49,27 +63,9 @@ export default defineComponent({
       loading,
       error,
       fetchMore,
-    } = useQuery(
-      gql`
-        query testQuery($argsName: String!) {
-          getHello {
-            name
-            NewField {
-              str
-            }
-          }
-          getArgsName(name: $argsName) {
-            name
-            NewField {
-              str
-            }
-          }
-        }
-      `,
-      {
-        argsName: "가나",
-      }
-    );
+    } = useQuery<QueryTestQuery, QueryTestQueryVariables>(Query_QUERYTEST, {
+      argsName: "가나",
+    });
 
     const queryData = computed(() => queryResult.value);
 
@@ -80,24 +76,11 @@ export default defineComponent({
     // Mutation
     const muationData = ref();
 
-    const { mutate: sendMutation, onDone: mutationDone } = useMutation(
-      gql`
-        mutation ($inputType: GRinputType!, $argsType: String!) {
-          getArgsType(name: $argsType) {
-            name
-            NewField {
-              str
-            }
-          }
-          getInputType(argsStr: $inputType) {
-            name
-            NewField {
-              str
-            }
-          }
-        }
-      `
-    );
+    const { mutate: sendMutation, onDone: mutationDone } = useMutation<
+      ArgsTypeMutation,
+      ArgsTypeMutationVariables
+    >(Mutation_ArgsType);
+
     sendMutation({
       inputType: {
         name: "inputType",
@@ -115,18 +98,14 @@ export default defineComponent({
     const subVariables = reactive({
       subID: "",
     });
-    const { result: subResult } = useSubscription(
-      gql`
-        subscription ($subID: String!) {
-          subTest(subID: $subID)
-        }
-      `,
-      subVariables
-    );
+    const { result: subResult } = useSubscription<
+      SubTestSubscription,
+      SubTestSubscriptionVariables
+    >(Subscription_SubTest, subVariables);
 
     watch(subResult, (data) => {
       console.log("new Data", data);
-      subArray.value.push(data.subTest);
+      subArray.value.push(data?.subTest);
     });
 
     const subPost = reactive({
@@ -134,18 +113,14 @@ export default defineComponent({
       postSub: "",
     });
 
-    const { mutate: subMutation } = useMutation(
-      gql`
-        mutation ($str: String!, $postSub: String!) {
-          postSub(str: $str, postSub: $postSub)
-        }
-      `,
-      () => ({
-        variables: {
-          ...subPost,
-        },
-      })
-    );
+    const { mutate: subMutation } = useMutation<
+      PostSubMutation,
+      PostSubMutationVariables
+    >(Mutation_Postsub, () => ({
+      variables: {
+        ...subPost,
+      },
+    }));
 
     //
     return {
