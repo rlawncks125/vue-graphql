@@ -73,7 +73,7 @@ vue.use(urql, urqlClient) // graphql-codegen 라이브러리 urql 통신 사용
 docker로 만든 DB 접속시 db_database가 없기때문에 에러 발생
 
 ```
-docker exec -it 'mariadb-contaier' -uroot -p'비밀번호' << mysql 접속
+docker exec -it 'mariadb-contaier' mariadb -uroot -p'비밀번호' << mysql 접속
 ALTER USER root@localhost IDENTIFIED BY '새로운패스워드'; << root 임시 비밀번호 재설정
 create database 'db_database' << database 생성
 ```
