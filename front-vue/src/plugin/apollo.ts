@@ -16,6 +16,10 @@ import { getMainDefinition } from "@apollo/client/utilities";
 // Create an http link:
 const httpLink = new HttpLink({
   uri: "http://localhost:3033/graphql",
+  headers: {
+    acces_token:
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNjQ5ODc2MzY1fQ.5onL5nZoPtmnyeH0V1if6Fjldr7r6YgS9vYyUTLLegM",
+  },
 });
 
 // Create a WebSocket link:
@@ -23,6 +27,10 @@ const wsLink = new WebSocketLink({
   uri: "ws://localhost:3033/graphql",
   options: {
     reconnect: true,
+    connectionParams: {
+      acces_token:
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNjQ5ODc2MzY1fQ.5onL5nZoPtmnyeH0V1if6Fjldr7r6YgS9vYyUTLLegM",
+    },
   },
 });
 

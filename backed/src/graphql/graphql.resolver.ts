@@ -1,3 +1,4 @@
+import { UseGuards } from '@nestjs/common';
 import {
   Args,
   ArgsType,
@@ -13,6 +14,9 @@ import {
   Subscription,
 } from '@nestjs/graphql';
 import { PubSub } from 'graphql-subscriptions';
+import { AuthGuardGraphQL } from 'src/auth/auth.guard';
+import { authUserGraphQL } from 'src/auth/authUser.decorator';
+import { User } from 'src/user/entities/user.entity';
 
 @ObjectType()
 class GraphQLTest {
@@ -76,6 +80,7 @@ export class GraphqlResolver {
   }
 
   // subscription 테스트
+  @UseGuards(AuthGuardGraphQL)
   @Subscription((returns) => String, {
     name: 'subTest',
     // payload publish로 보낸 데이터
@@ -84,16 +89,22 @@ export class GraphqlResolver {
       return payload.postSub === variables.subID;
     },
   })
-  subTest(@Args('subID') subID: string) {
+  subTest(@Args('subID') subID: string, @authUserGraphQL() user: User) {
+    console.log('구독 활성화 +', user.username);
     return pubSub.asyncIterator('subTest');
   }
 
   @Mutation((returns) => String)
+  @UseGuards(AuthGuardGraphQL)
   postSub(
     @Args('str', { type: () => String }) str: string,
     @Args('postSub', { type: () => String }) postSub: string,
+    @authUserGraphQL() user: User,
   ) {
-    pubSub.publish('subTest', { subTest: str, postSub });
+    pubSub.publish('subTest', {
+      subTest: `${user.username} : ${str}`,
+      postSub,
+    });
     return str;
   }
 }
