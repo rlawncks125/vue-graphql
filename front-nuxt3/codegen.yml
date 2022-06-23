@@ -1,0 +1,8 @@
+schema: http://localhost:3033/graphql
+documents: "./graphql/gql/*.ts" # codegen으로 만들 스키마 파일 경로들
+generates:
+  ./graphql/graphql-codegen.ts: # 출력 파일 위치
+    plugins:
+      - typescript
+      - typescript-operations
+      - typescript-vue-urql
