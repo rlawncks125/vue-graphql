@@ -2,20 +2,28 @@
 import urql, {
   createClient,
   defaultExchanges,
+  Exchange,
   provideClient,
   subscriptionExchange,
 } from "@urql/vue";
 import { SubscriptionClient } from "subscriptions-transport-ws";
+// import * as ws from "ws";
+import { WebSocket } from "ws";
 
-// const subscriptionClient = process.browser
-//   ? new SubscriptionClient("ws://localhost:3033/graphql", {
-//       reconnect: true,
-//       connectionParams: {
-//         acces_token:
-//           "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNjQ5ODc2MzY1fQ.5onL5nZoPtmnyeH0V1if6Fjldr7r6YgS9vYyUTLLegM",
-//       },
-//     })
-//   : null;
+import pkg from "ws";
+const { WebSocket: WebSocketNode } = pkg;
+
+const subscriptionClient = new SubscriptionClient(
+  "ws://localhost:3033/graphql",
+  {
+    reconnect: true,
+    connectionParams: {
+      acces_token:
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNjQ5ODc2MzY1fQ.5onL5nZoPtmnyeH0V1if6Fjldr7r6YgS9vYyUTLLegM",
+    },
+  },
+  WebSocket || WebSocketNode
+);
 
 export const urqlClient = createClient({
   url: "http://localhost:3033/graphql",
@@ -25,12 +33,12 @@ export const urqlClient = createClient({
         "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNjQ5ODc2MzY1fQ.5onL5nZoPtmnyeH0V1if6Fjldr7r6YgS9vYyUTLLegM",
     },
   },
-  // exchanges: [
-  //   ...defaultExchanges,
-  //   subscriptionExchange({
-  //     forwardSubscription: (operation) => subscriptionClient.request(operation),
-  //   }),
-  // ],
+  exchanges: [
+    ...defaultExchanges,
+    subscriptionExchange({
+      forwardSubscription: (operation) => subscriptionClient.request(operation),
+    }),
+  ],
 });
 
 export default defineNuxtPlugin((nuxtApp) => {

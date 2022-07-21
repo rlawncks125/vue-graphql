@@ -1,10 +1,10 @@
 {
   "private": true,
   "scripts": {
-    "build": "nuxt build",
-    "dev": "nuxt dev",
+    "build": "cross-env NODE_ENV=production nuxt build",
+    "dev": "cross-env PORT=3034 nuxt dev",
     "generate": "nuxt generate",
-    "preview": "nuxt preview",
+    "preview": "cross-env PORT=8092 node .output/server/index.mjs",
     "codegen": "npx graphql-codegen"
   },
   "devDependencies": {
@@ -18,7 +18,9 @@
     "@graphql-codegen/typescript-vue-urql": "^2.2.14",
     "@urql/vue": "^0.6.3",
     "graphql": "^16.5.0",
+    "http-server": "^14.1.1",
     "socket.io-client": "^4.5.1",
-    "subscriptions-transport-ws": "^0.11.0"
+    "subscriptions-transport-ws": "^0.11.0",
+    "ws": "^8.8.1"
   }
 }
